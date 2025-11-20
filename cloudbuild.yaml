@@ -1,0 +1,38 @@
+# cloudbuild.yaml
+
+# Substitutions (can be set in trigger or here)
+substitutions:
+  _SERVICE: "learning-cicd-service"   # Cloud Run service name
+  _REGION: "us-central1"              # Cloud Run region
+  _IMAGE_REPO: "learning-cicd"        # Artifact Registry repo
+
+steps:
+# 1️⃣ Build Docker image
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - build
+    - -t
+    - 'us-central1-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:$COMMIT_SHA'
+    - .
+
+# 2️⃣ Push Docker image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - push
+    - 'us-central1-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:$COMMIT_SHA'
+
+# 3️⃣ Deploy to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - run
+    - deploy
+    - '${_SERVICE}'
+    - --image=us-central1-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:$COMMIT_SHA
+    - --region=${_REGION}
+    - --platform=managed
+    - --allow-unauthenticated
+
+# Optional: expose built image as an artifact
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:$COMMIT_SHA'
