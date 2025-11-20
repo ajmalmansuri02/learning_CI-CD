@@ -6,6 +6,9 @@ substitutions:
   _REGION: "us-central1"              # Cloud Run region
   _IMAGE_REPO: "learning-cicd"        # Artifact Registry repo
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+  
 steps:
 # 1️⃣ Build Docker image
 - name: 'gcr.io/cloud-builders/docker'
