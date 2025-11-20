@@ -14,12 +14,23 @@
 # CMD ["node", "index.js"]
 
 # Minimal Dockerfile
+# FROM node:18-alpine
+
+# WORKDIR /app
+
+# # Just create a simple file so Docker build works
+# RUN echo "console.log('Hello from Cloud Run');" > index.js
+
+# # Command to run the app
+# CMD ["node", "index.js"]
+
+
+# Dockerfile
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Just create a simple file so Docker build works
-RUN echo "console.log('Hello from Cloud Run');" > index.js
+# Minimal server
+RUN echo "const http = require('http'); const port = process.env.PORT || 8080; http.createServer((req,res)=>res.end('Hello Cloud Run')).listen(port);" > index.js
 
-# Command to run the app
 CMD ["node", "index.js"]
