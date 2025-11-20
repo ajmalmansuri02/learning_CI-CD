@@ -1,5 +1,6 @@
 # cloudbuild.yaml
 
+
 # Substitutions (can be set in trigger or here)
 substitutions:
   _SERVICE: "learning-cicd-service"   # Cloud Run service name
